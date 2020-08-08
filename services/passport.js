@@ -1,17 +1,29 @@
+
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
-passport.use(new LocalStrategy(
-    async (username, password, done) => {
-        try {
-            const user = await User.findOne({username : username});
-            
-            if(!user) return done(null, false, { message : "Incorrect username or password"});
-            console.log(user);
-        } catch(err) {
-            return done(err);
-        }
+const keys = require('../config/keys');
+
+module.exports = function(passport) {
+
+    const options = {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: keys.jwtSecret
     }
-));
+    
+    passport.use(new JwtStrategy(options, function(payload, done) {
+        User.findOne({id: payload.id}, function(err, user) {
+            if (err) {
+                return done(err, false);
+            }
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        });
+    }));
+}
