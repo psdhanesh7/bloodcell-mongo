@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
     if(!email || !password) return res.json({success: false, message: 'Email or password not entered'});
 
     try {
-        const user = new User({ email, password });
+        const user = new User({ email: email, password: password, admin: true });
         await user.save();
 
         res.json({success: true, message: 'User created succesfully'});
@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
     if(!email || !password) return res.json({ success: false, message: 'Email or password missing' });
 
     try {
-        const user = await User.findOne({ email: email});
+        const user = await User.findOne({ email: email} );
         if(!user) return res.json({ success: false, message: 'Email or password invalid'})
 
         user.comparePassword(password, (err, isMatch) => {
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
             if(!isMatch) return res.json({ success: false, message: 'Email or password invalid' });
             
             console.log(user);
-            const token = jwt.sign(user.toJSON(), keys.jwtSecret);
+            const token = jwt.sign({ id: user._id, admin: user.admin }, keys.jwtSecret);
             res.json({ success: true, token: token });
         });
 
