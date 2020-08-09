@@ -4,11 +4,15 @@ const session = require('express-session');
 const passport = require('passport')
 
 require('./models/User');
+require('./models/Hospital');
+require('./models/Donor');
+require('./models/Requirement');
 require('./services/passport');
 
 
 const keys = require('./config/keys');
 const authRoutes = require('./routes/authRoutes');
+const requirementRoutes = require('./routes/requirementRoutes');
 
 mongoose.connect(keys.mongoURI, {
         useNewUrlParser: true,
@@ -21,12 +25,16 @@ mongoose.connect(keys.mongoURI, {
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(session({ secret: 'this is really an awesome secret', resave: false, saveUninitialized: false }));
+app.use(express.urlencoded({extended: false}));
+app.use(session({ 
+    secret: 'this is really an awesome secret', 
+    resave: false, saveUninitialized: false 
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRoutes);
+app.use('/requirement', requirementRoutes);
 
 // This section of code is to be removed
 // -------------------------------------
@@ -34,12 +42,12 @@ app.use('/auth', authRoutes);
 const { authenticatedOnly } = require('./middlewares/authMiddleware');
 
 app.get('/', (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     res.send(req.user);
 })
 
 app.get('/dashboard', authenticatedOnly, (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     res.send(req.user);
 })
 

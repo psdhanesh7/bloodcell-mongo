@@ -23,13 +23,12 @@ router.post('/signup', unauthenticatedOnly, async (req, res) => {
     }
 });
 
-router.post('/login', unauthenticatedOnly, 
-    passport.authenticate('local', 
-        { 
-            failureRedirect: '/auth/login', 
-            successRedirect: '/dashboard' 
-        }
-    )
+router.post('/login', 
+    unauthenticatedOnly, 
+    passport.authenticate('local', { 
+        failureRedirect: '/auth/login', 
+        successRedirect: '/dashboard' 
+    })
 );
 
 router.get('/logout', (req, res) => {
