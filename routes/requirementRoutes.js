@@ -80,4 +80,38 @@ router.get('/:requirementId/assigndonor/:donorId', async (req, res) => {
     }
 });
 
+router.post('/:requirementId/close', async (req, res) => {
+
+    const { requirementId } = req.params;
+    const { donorCertificatesReceived } = req.body;
+    const donorCertificates = [];
+    console.log(typeof donorCertificates);
+    if(donorCertificatesReceived && (typeof donorCertificates) === Array &&donorCertificatesReceived.length > 0) {
+        donorCertificatesReceived.forEach(donor => {
+            donorCertificates.push({ "elem.donorName": donor })
+        });
+    }
+    
+
+    try {
+
+        if(donorCertificates.length > 0) {
+            await Requirement.updateOne(
+                { _id: requirementId },
+                { $set: { "donors.$[elem].donorCertificate": true, closed: true }},
+                {
+                    multi: true,
+                    arrayFilters: [{ $or: donorCertificates }]
+                }
+            );
+        }
+        else {
+            await Requirement.updateOne({ _id: requirementId }, { $set: { closed: true } });
+        }
+        res.json({ success: true, message: 'Donor certificates succesfully updated' })
+    } catch(err) {
+        return res.send({ success: false, message: err.message });
+    }
+})
+
 module.exports = router;
