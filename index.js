@@ -9,10 +9,11 @@ require('./models/Donor');
 require('./models/Requirement');
 require('./services/passport');
 
-
 const keys = require('./config/keys');
 const authRoutes = require('./routes/authRoutes');
 const requirementRoutes = require('./routes/requirementRoutes');
+const donorRoutes = require('./routes/donorRoutes');
+const hospitalRoutes = require('./routes/hospitalRoutes');
 
 mongoose.connect(keys.mongoURI, {
         useNewUrlParser: true,
@@ -35,24 +36,8 @@ app.use(passport.session());
 
 app.use('/auth', authRoutes);
 app.use('/requirement', requirementRoutes);
-
-// This section of code is to be removed
-// -------------------------------------
-
-const { authenticatedOnly } = require('./middlewares/authMiddleware');
-
-app.get('/', (req, res) => {
-    // console.log(req.user);
-    res.send(req.user);
-})
-
-app.get('/dashboard', authenticatedOnly, (req, res) => {
-    // console.log(req.user);
-    res.send(req.user);
-})
-
-// -------------------------------------
-// The section of code to be removed ends here
+app.use('/donor', donorRoutes);
+app.use('/hospital', hospitalRoutes);
 
 const PORT = process.env.PORT || 3000;
 

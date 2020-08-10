@@ -18,14 +18,14 @@ const DonorSchema = new Schema({
         type: String,
         required: true
     },
-    bloodgroup: {
+    bloodGroup: {
         type: String,
         required: true
     },
     height: Number,
     weight: Number,
     lastDonation: Date,
-    preLastDonation: Date
+    prevLastDonation: Date
 });
 
 mongoose.model('Donor', DonorSchema);

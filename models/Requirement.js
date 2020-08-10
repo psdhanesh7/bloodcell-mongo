@@ -40,7 +40,22 @@ const RequirementSchema = new Schema({
     },
     donors: {
         type: [{ 
-            donor: String, 
+            donorName: {
+                type: String,
+                required: true
+            },
+            yearOfAdmission: {
+                type: Number,
+                required: true
+            },
+            department: {
+                type: String,
+                required: true
+            },
+            contactNo: {
+                type: String,
+                required: true
+            }, 
             donorCertificate: {
                 type: Boolean, 
                 default: false
