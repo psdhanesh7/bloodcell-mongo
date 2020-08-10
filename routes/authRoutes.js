@@ -1,12 +1,9 @@
-const express = require('express');
+const router = require('express').Router();
 const passport = require('passport');
-const mongoose = require('mongoose');
-const User = mongoose.model('User');
+const User = require('mongoose').model('User');
 
 require('../services/passport')(passport);
 const { unauthenticatedOnly } = require('../middlewares/authMiddleware');
-
-const router = express.Router();
 
 router.post('/signup', unauthenticatedOnly, async (req, res) => {
 
@@ -26,10 +23,18 @@ router.post('/signup', unauthenticatedOnly, async (req, res) => {
 router.post('/login', 
     unauthenticatedOnly, 
     passport.authenticate('local', { 
-        failureRedirect: '/auth/login', 
-        successRedirect: '/dashboard' 
+        failureRedirect: '/auth/loginFailure', 
+        successRedirect: '/auth/loginSuccess' 
     })
 );
+
+router.get('/loginSuccess', (req, res) => {
+    res.json({ success: true, message: 'User logged in succesfully'} );
+})
+
+router.get('loginFailure', (req, res) => {
+    res.json({ success: false, message: 'User login failed' });
+})
 
 router.get('/logout', (req, res) => {
     req.logout();

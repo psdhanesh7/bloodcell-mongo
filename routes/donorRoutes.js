@@ -1,8 +1,8 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const Donor = mongoose.model('Donor');
+const router = require('express').Router();
+const Donor = require('mongoose').model('Donor');
+const { authenticatedOnly } = require('../middlewares/authMiddleware');
 
-const router = express.Router();
+router.use(authenticatedOnly);
 
 router.get('/', async (req, res) => {
     try {

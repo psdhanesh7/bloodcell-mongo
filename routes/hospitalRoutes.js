@@ -1,6 +1,10 @@
 const router = require('express').Router();
 const Hospital = require('mongoose').model('Hospital');
 
+const { authenticatedOnly } = require('../middlewares/authMiddleware');
+
+router.use(authenticatedOnly);
+
 router.get('/', async (req, res) => {
     
     try {

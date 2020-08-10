@@ -1,9 +1,11 @@
-const express = require('express');
+const router = require('express').Router();
 const mongoose = require('mongoose');
 const Requirement = mongoose.model('Requirement');
 const Donor = mongoose.model('Donor');
 
-const router = express.Router();
+const { authenticatedOnly } = require('../middlewares/authMiddleware');
+
+router.use(authenticatedOnly);
 
 router.get('/active', async (req, res) => {
 
@@ -85,7 +87,7 @@ router.post('/:requirementId/close', async (req, res) => {
     const { requirementId } = req.params;
     const { donorCertificatesReceived } = req.body;
     const donorCertificates = [];
-    console.log(typeof donorCertificates);
+
     if(donorCertificatesReceived && (typeof donorCertificates) === Array &&donorCertificatesReceived.length > 0) {
         donorCertificatesReceived.forEach(donor => {
             donorCertificates.push({ "elem.donorName": donor })
