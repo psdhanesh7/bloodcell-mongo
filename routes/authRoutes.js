@@ -3,7 +3,7 @@ const passport = require('passport');
 const User = require('mongoose').model('User');
 
 require('../services/passport')(passport);
-const { unauthenticatedOnly } = require('../middlewares/authMiddleware');
+const { unauthenticatedOnly, authenticatedOnly } = require('../middlewares/authMiddleware');
 
 router.post('/signup', unauthenticatedOnly, async (req, res) => {
 
@@ -22,23 +22,25 @@ router.post('/signup', unauthenticatedOnly, async (req, res) => {
 
 router.post('/login', 
     unauthenticatedOnly, 
-    passport.authenticate('local', { 
-        failureRedirect: '/auth/loginFailure', 
-        successRedirect: '/auth/loginSuccess' 
-    })
+    passport.authenticate('local', {
+        failureRedirect: '/auth/loginFailure'
+    }),
+    (req, res) => {
+        return res.send({ success: true, user: req.user });
+    }
 );
 
-router.get('/loginSuccess', (req, res) => {
-    res.json({ success: true, message: 'User logged in succesfully'} );
-})
-
-router.get('loginFailure', (req, res) => {
-    res.json({ success: false, message: 'User login failed' });
+router.get('/loginFailure', (req, res) => {
+    res.json({ success: false, user: false, message: 'User login failed' });
 })
 
 router.get('/logout', (req, res) => {
     req.logout();
     res.json({ success: true, message: 'Logout successful' });
 });
+
+router.get('/currentUser', (req, res) => {
+    res.send(req.user);
+})
 
 module.exports = router;

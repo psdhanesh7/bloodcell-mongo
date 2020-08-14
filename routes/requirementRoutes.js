@@ -76,10 +76,15 @@ router.get('/:requirementId/assigndonor/:donorId', async (req, res) => {
         } finally {
             await session.endSession();
         }
-        
     } catch(err) {
         return res.json({ success: false, message: err.message });
     }
+});
+
+// This route is yet to be completed
+router.get('/:requirementId/removedonor/:donorId', async (req, res) => {
+    const { requirementId, donorId } = req.params;
+
 });
 
 router.post('/:requirementId/close', async (req, res) => {
@@ -88,15 +93,13 @@ router.post('/:requirementId/close', async (req, res) => {
     const { donorCertificatesReceived } = req.body;
     const donorCertificates = [];
 
-    if(donorCertificatesReceived && (typeof donorCertificates) === Array &&donorCertificatesReceived.length > 0) {
+    if(donorCertificatesReceived && (typeof donorCertificates) === Array) {
         donorCertificatesReceived.forEach(donor => {
             donorCertificates.push({ "elem.donorName": donor })
         });
     }
     
-
     try {
-
         if(donorCertificates.length > 0) {
             await Requirement.updateOne(
                 { _id: requirementId },
@@ -110,10 +113,10 @@ router.post('/:requirementId/close', async (req, res) => {
         else {
             await Requirement.updateOne({ _id: requirementId }, { $set: { closed: true } });
         }
-        res.json({ success: true, message: 'Donor certificates succesfully updated' })
+        res.json({ success: true, message: 'Donor certificates succesfully updated' });
     } catch(err) {
         return res.send({ success: false, message: err.message });
     }
-})
+});
 
 module.exports = router;

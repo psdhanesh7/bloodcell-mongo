@@ -5,8 +5,7 @@ const { authenticatedOnly } = require('../middlewares/authMiddleware');
 
 router.use(authenticatedOnly);
 
-router.get('/', async (req, res) => {
-    
+router.get('/', async (req, res) => {    
     try {
         const hospitals = await Hospital.find();
         res.json({ success: true, hospitals: hospitals });
